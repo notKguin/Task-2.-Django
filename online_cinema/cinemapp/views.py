@@ -1,8 +1,15 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 
 def index(request):
-    # Список фильмов с жанрами и ссылками на картинки
     films = [
+        {
+            'title': 'Django освобожденный', 
+            'genre': 'вестерн', 
+            'year': 2012, 
+            'rating': 8.5,
+            'image': 'https://m.media-amazon.com/images/M/MV5BMjIyNTQ5NjQ1OV5BMl5BanBnXkFtZTcwODg1MDU4OA@@._V1_FMjpg_UX1000_.jpg'
+        },
         {
             'title': 'Зеленая миля', 
             'genre': 'драма', 
@@ -53,13 +60,6 @@ def index(request):
             'image': 'https://m.media-amazon.com/images/M/MV5BODllNWE0MmEtYjUwZi00ZjY3LThmNmQtZjZlMjI2YTZjYmQ0XkEyXkFqcGdeQXVyNTc1NTQxODI@._V1_FMjpg_UX1000_.jpg'
         },
         {
-            'title': 'Django освобожденный', 
-            'genre': 'вестерн', 
-            'year': 2012, 
-            'rating': 8.5,
-            'image': 'https://m.media-amazon.com/images/M/MV5BMjIyNTQ5NjQ1OV5BMl5BanBnXkFtZTcwODg1MDU4OA@@._V1_FMjpg_UX1000_.jpg'
-        },
-        {
             'title': 'Титаник', 
             'genre': 'мелодрама', 
             'year': 1997, 
@@ -68,22 +68,36 @@ def index(request):
         }
     ]
     
-    # Получаем выбранный жанр из GET-параметра
     selected_genre = request.GET.get('genre', '')
     
-    # Фильтруем фильмы по жанру, если выбран
     if selected_genre:
         filtered_films = [film for film in films if film['genre'] == selected_genre]
     else:
         filtered_films = films
     
-    # Получаем уникальные жанры для фильтра
     genres = sorted(set(film['genre'] for film in films))
     
     context = {
         'films': filtered_films,
         'genres': genres,
         'selected_genre': selected_genre,
+        'show_cookie_banner': (request.COOKIES.get('cookie_consent') != '1'),
     }
     
     return render(request, 'cinemapp/index.html', context)
+
+
+def accept_cookies(request):
+    """
+    Ставит куку согласия и возвращает JSON {ok: true}.
+    """
+    resp = JsonResponse({'ok': True})
+    max_age = 60 * 60 * 24 * 180
+    resp.set_cookie(
+        key='cookie_consent',
+        value='1',
+        max_age=max_age,
+        samesite='Lax',
+        secure=request.is_secure(),
+    )
+    return resp
