@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Никопоиск{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .film-card {
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+        .film-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .film-image {
+            height: 450px;
+            object-fit: cover;
+        }
+        .rating-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .genre-btn {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Header -->
+    <header class="bg-dark text-white py-4 mb-4">
+        <div class="container">
+            <h1 class="text-center">Никопоиск</h1>
+            <p class="text-center mb-0">Лучшие фильмы всех времен</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Filters -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="h5 card-title">Фильтр по жанрам:</h2>
+                <div class="d-flex flex-wrap">
+                    <a href="?" class="btn btn-outline-primary genre-btn {% if not selected_genre %}active{% endif %}">
+                        Все жанры
+                    </a>
+                    {% for genre in genres %}
+                        <a href="?genre={{ genre }}" 
+                           class="btn btn-outline-primary genre-btn {% if selected_genre == genre %}active{% endif %}">
+                            {{ genre }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Films Grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for film in films %}
+                <div class="col">
+                    <div class="card film-card h-100">
+                        <div class="position-relative">
+                            <img src="{{ film.image }}" class="card-img-top film-image" alt="{{ film.title }}">
+                            <span class="badge bg-warning text-dark rating-badge">⭐ {{ film.rating }}</span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ film.title }}</h5>
+                            <div class="card-text">
+                                <p class="mb-1"><strong>Жанр:</strong> {{ film.genre }}</p>
+                                <p class="mb-1"><strong>Год:</strong> {{ film.year }}</p>
+                                <p class="mb-0"><strong>Рейтинг:</strong> {{ film.rating }}/10</p>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <small class="text-muted">Никопоиск рекомендует</small>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <h3>Фильмы не найдены</h3>
+                            <p class="text-muted">Попробуйте выбрать другой жанр</p>
+                            <a href="?" class="btn btn-primary">Показать все фильмы</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">© 2025-2025, Никопоиск 21+</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
